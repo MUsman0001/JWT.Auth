@@ -1,0 +1,91 @@
+﻿@page "/review"
+<h3>Patient Review</h3>
+
+<style>
+    .review-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .review-section {
+        text-align: center;
+        margin: 0 20px;
+    }
+
+    .review-image {
+        width: 300px; /* Adjust the size as needed */
+        height: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 5px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    h4 {
+        font-size: 1.5em; /* Increase the heading size */
+    }
+
+    .review-text {
+        margin-bottom: 10px;
+    }
+
+    .view-button {
+        margin-bottom: 20px;
+        padding: 10px 15px;
+        font-size: 1em;
+        cursor: pointer;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+
+        .view-button:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+<div class="review-container">
+    <div class="review-section">
+        <h4>Before</h4>
+        <p class="review-text">Before I visited this hospital, I was struggling with my health issues...</p>
+        <button class="view-button" @onclick="ToggleBeforeImage">Click to view</button>
+        <div>
+            @if (showBeforeImage)
+            {
+                <img src="images/hh.jpg" alt="Before" class="review-image" />
+            }
+        </div>
+    </div>
+
+    <div class="review-section">
+        <h4>After</h4>
+        <p class="review-text">After my visit, I feel much better and my health has significantly improved...</p>
+        <button class="view-button" @onclick="ToggleAfterImage">Click to view</button>
+        <div>
+            @if (showAfterImage)
+            {
+                <img src="images/hhh.jpg" alt="After" class="review-image" />
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool showBeforeImage = false;
+    private bool showAfterImage = false;
+
+    private void ToggleBeforeImage()
+    {
+        showBeforeImage = !showBeforeImage;
+        if (showBeforeImage) showAfterImage = false; // Optionally hide the after image if showing before
+    }
+
+    private void ToggleAfterImage()
+    {
+        showAfterImage = !showAfterImage;
+        if (showAfterImage) showBeforeImage = false; // Optionally hide the before image if showing after
+    }
+}

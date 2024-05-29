@@ -1,0 +1,165 @@
+﻿@page "/labtests"
+@using JWT.Auth.BlazorUI.Client
+@inject LabTestService LabTestService
+@inject IJSRuntime JS
+
+
+
+<h3>Lab Tests</h3>
+
+<div class="patients-table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Contact</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var patient in patients)
+            {
+                <tr>
+                    <td>@patient.Name</td>
+                    <td>@patient.Age</td>
+                    <td>@patient.Gender</td>
+                    <td>@patient.Contact</td>
+                    <td><button @onclick="() => ShowLabTestOptions(patient.Id)">View Lab Tests</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (selectedPatient != null && showLabTestOptions)
+{
+    <div class="lab-test-options">
+        <h4>Select Lab Test for @selectedPatient.Name</h4>
+        <select class="lab-test-select" @bind="selectedLabTestType">
+            @foreach (var labTestType in labTestTypes)
+            {
+                <option value="@labTestType">@labTestType</option>
+            }
+        </select>
+        <button class="add-test-button" @onclick="() => ShowConfirmation(selectedPatient.Id, selectedLabTestType)">Add Lab Test</button>
+    </div>
+}
+
+@if (selectedPatient != null && !showLabTestOptions)
+{
+    <div class="lab-test-list">
+        <h4>Lab Tests for @selectedPatient.Name</h4>
+        <ul>
+            @foreach (var labTest in labTests)
+            {
+                <li>@labTest.TestName: @labTest.Description</li>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    private List<Patient> patients;
+    private Patient selectedPatient;
+    private List<LabTest> labTests;
+    private List<string> labTestTypes;
+    private string selectedLabTestType;
+    private bool showLabTestOptions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        patients = await LabTestService.GetAllPatients();
+        labTestTypes = new List<string> { "Blood Test", "Urinalysis", "X-ray", "MRI", "Ultrasound" };
+    }
+
+    private async Task ShowLabTestOptions(int patientId)
+    {
+        selectedPatient = patients.FirstOrDefault(p => p.Id == patientId);
+        showLabTestOptions = true;
+    }
+
+    private async Task ShowConfirmation(int patientId, string labTestType)
+    {
+        var confirmed = await JS.InvokeAsync<bool>("confirm", $"Do you want to perform {labTestType} for {selectedPatient.Name}?");
+        if (confirmed)
+        {
+            await AddLabTest(patientId, labTestType);
+        }
+    }
+
+    private async Task AddLabTest(int patientId, string labTestType)
+    {
+        var newLabTest = new LabTest
+            {
+                PatientId = patientId,
+                TestName = labTestType,
+                Description = $"Perform {labTestType} for {selectedPatient.Name}"
+            };
+        // await LabTestService.AddLabTest(newLabTest);
+        labTests = await LabTestService.GetLabTestsByPatientId(patientId);
+        showLabTestOptions = false;
+    }
+}
+<style>
+
+.patients-table-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.lab-test-options {
+    margin-top: 20px;
+}
+
+.lab-test-select {
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.add-test-button {
+    margin-left: 10px;
+}
+
+.lab-test-list {
+    margin-top: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 5px;
+}
+</style>

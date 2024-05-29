@@ -1,0 +1,68 @@
+﻿
+<style>
+    .container {
+    margin-top: 50px;
+}
+
+.card {
+    border: none;
+    border-radius: 15px; /* Rounded corners for a modern design */
+}
+
+.card-title {
+    font-size: 2.5rem; /* Larger heading for impact */
+    color: #2c3e50; /* Dark blue for a professional appearance */
+}
+
+.card-text {
+    font-size: 1.1rem; /* Slightly larger paragraph text for readability */
+    color: #34495e; /* Darker shade for better contrast */
+}
+
+.btn-group {
+    margin-top: 20px; /* Spacing between text and buttons */
+    justify-content: center; /* Center buttons horizontally */
+}
+
+.btn-primary,
+.btn-success {
+    border-radius: 25px; /* More rounded corners for modern buttons */
+    padding: 12px 24px; /* Larger padding for comfortable button size */
+    font-size: 1rem; /* Uniform font size for buttons */
+    transition: background-color 0.3s ease; /* Smooth transition effect */
+}
+
+.btn-primary:hover {
+    background-color: #007bff; /* Darker blue on hover for primary button */
+}
+
+.btn-success:hover {
+    background-color: #28a745; /* Darker green on hover for success button */
+}
+
+.img-fluid {
+    border-radius: 15px 0 0 15px; /* Rounded corners matching the card */
+    object-fit: cover; /* Ensure image covers the card area */
+    height: 100%; /* Full height to match the card */
+}
+
+/* Responsive media queries (optional) */
+@media (max-width: 767.98px) {
+    .card {
+        border-radius: 0; /* Remove rounded corners on smaller screens */
+    }
+
+    .img-fluid {
+        border-radius: 0; /* Consistency for image on smaller screens */
+    }
+
+    .card-body {
+        text-align: center; /* Center text on smaller screens */
+    }
+
+    .btn-group {
+        justify-content: center; /* Center buttons on smaller screens */
+    }
+}
+
+</style>

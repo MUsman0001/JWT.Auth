@@ -1,0 +1,15 @@
+﻿ CREATE TABLE Patients (
+    Id INT PRIMARY KEY IDENTITY,
+    Name NVARCHAR(100) NOT NULL,
+    Age INT NOT NULL,
+    Gender NVARCHAR(10) NOT NULL,
+    Contact NVARCHAR(50) NOT NULL
+);
+CREATE TABLE Appointments (
+    Id INT PRIMARY KEY IDENTITY,
+    PatientId INT NOT NULL,
+    Date DATE NOT NULL,
+    Time TIME NOT NULL,
+    Doctor NVARCHAR(100) NOT NULL,
+    FOREIGN KEY (PatientId) REFERENCES Patients(Id)
+);

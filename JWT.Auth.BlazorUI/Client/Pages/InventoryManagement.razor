@@ -1,0 +1,205 @@
+﻿@page "/inventory"
+
+<h3 class="text-center">Inventory Management</h3>
+<div class="inventory-container">
+    <button class="btn btn-primary" @onclick="ShowAddNewItemForm">Add New Item</button>
+
+    @if (showAddNewItemForm)
+    {
+        <div class="form-container">
+            <h4>Add New Item</h4>
+            <input placeholder="Name" @bind="newItem.Name" />
+            <input placeholder="Category" @bind="newItem.Category" />
+            <input placeholder="Quantity" type="number" @bind="newItem.Quantity" />
+            <input placeholder="Description" @bind="newItem.Description" />
+            <button class="btn btn-success" @onclick="AddNewItem">Save</button>
+            <button class="btn btn-secondary" @onclick="CancelAddNewItemForm">Cancel</button>
+        </div>
+    }
+
+    <div class="inventory-list">
+        @foreach (var item in inventory)
+        {
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">@item.Name</h4>
+                    <span>@item.Category</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Quantity:</strong> @item.Quantity</p>
+                    <p><strong>Description:</strong> @item.Description</p>
+                    <button class="btn btn-warning" @onclick="() => ShowEditItemForm(item.Id)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => RemoveItem(item.Id)">Remove</button>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (showEditItemForm)
+    {
+        <div class="form-container">
+            <h4>Edit Item</h4>
+            <input placeholder="Name" @bind="editItem.Name" />
+            <input placeholder="Category" @bind="editItem.Category" />
+            <input placeholder="Quantity" type="number" @bind="editItem.Quantity" />
+            <input placeholder="Description" @bind="editItem.Description" />
+            <button class="btn btn-success" @onclick="UpdateItem">Save</button>
+            <button class="btn btn-secondary" @onclick="CancelEditItemForm">Cancel</button>
+        </div>
+    }
+</div>
+
+@code {
+    private List<InventoryItem> inventory = new List<InventoryItem>
+    {
+        new InventoryItem { Id = 1, Name = "Syringe", Category = "Medical Supplies", Quantity = 500, Description = "Standard disposable syringes." },
+        new InventoryItem { Id = 2, Name = "Aspirin", Category = "Pharmaceuticals", Quantity = 200, Description = "Pain relief medication." },
+        new InventoryItem { Id = 3, Name = "Stethoscope", Category = "Equipment", Quantity = 50, Description = "Used for auscultation." }
+    };
+
+    private InventoryItem newItem = new InventoryItem();
+    private InventoryItem editItem = new InventoryItem();
+    private bool showAddNewItemForm = false;
+    private bool showEditItemForm = false;
+
+    private void ShowAddNewItemForm()
+    {
+        showAddNewItemForm = true;
+        showEditItemForm = false;
+    }
+
+    private void CancelAddNewItemForm()
+    {
+        showAddNewItemForm = false;
+        newItem = new InventoryItem();
+    }
+
+    private void AddNewItem()
+    {
+        newItem.Id = inventory.Max(i => i.Id) + 1;
+        inventory.Add(newItem);
+        newItem = new InventoryItem();
+        showAddNewItemForm = false;
+    }
+
+    private void ShowEditItemForm(int id)
+    {
+        editItem = inventory.FirstOrDefault(i => i.Id == id);
+        showEditItemForm = true;
+        showAddNewItemForm = false;
+    }
+
+    private void CancelEditItemForm()
+    {
+        showEditItemForm = false;
+        editItem = new InventoryItem();
+    }
+
+    private void UpdateItem()
+    {
+        var index = inventory.FindIndex(i => i.Id == editItem.Id);
+        if (index != -1)
+        {
+            inventory[index] = editItem;
+        }
+        editItem = new InventoryItem();
+        showEditItemForm = false;
+    }
+
+    private void RemoveItem(int id)
+    {
+        var item = inventory.FirstOrDefault(i => i.Id == id);
+        if (item != null)
+        {
+            inventory.Remove(item);
+        }
+    }
+
+    public class InventoryItem
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Category { get; set; }
+        public int Quantity { get; set; }
+        public string Description { get; set; }
+    }
+}
+<style>
+    .inventory-container {
+        padding: 2rem;
+    }
+
+    .form-container {
+        margin: 1rem 0;
+        padding: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 0.5rem;
+    }
+
+    .inventory-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .card {
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+        padding: 1rem;
+    }
+
+    .card-header {
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 0.5rem;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .card-title {
+        margin: 0;
+        font-size: 1.25rem;
+    }
+
+    .card-body {
+        padding: 0.5rem;
+        text-align: center;
+    }
+
+    .btn {
+        background-color: #007bff;
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1rem;
+        margin: 0.5rem 0;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+    .btn-warning {
+        background-color: #ffc107;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+</style>

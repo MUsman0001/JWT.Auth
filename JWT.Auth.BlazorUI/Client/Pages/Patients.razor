@@ -1,0 +1,111 @@
+﻿@page "/patients"
+@inject HttpClient Http
+@using JWT.Auth.BlazorUI.Shared.Models
+
+<h3 class="text-center my-4">Patient Management</h3>
+<div class="container-fluid">
+    <div class="card shadow mb-4" style="background-color: #f8f9fa;">
+        <div class="card-body">
+            <h5 class="card-title">Add New Patient</h5>
+            <form @onsubmit="AddPatient">
+                <div class="form-group">
+                    <label for="patientName">Name:</label>
+                    <input @bind="newPatient.Name" class="form-control form-control-lg" id="patientName" placeholder="Name" required />
+                </div>
+                <div class="form-group">
+                    <label for="patientAge">Age:</label>
+                    <input @bind="newPatient.Age" class="form-control form-control-lg" id="patientAge" placeholder="Age" type="number" min="0" required />
+                </div>
+                <div class="form-group">
+                    <label for="patientGender">Gender:</label>
+                    <input @bind="newPatient.Gender" class="form-control form-control-lg" id="patientGender" placeholder="Gender" required />
+                </div>
+                <div class="form-group">
+                    <label for="patientContact">Contact:</label>
+                    <input @bind="newPatient.Contact" class="form-control form-control-lg" id="patientContact" placeholder="Contact" required />
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100">Add Patient</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="list-group">
+        @foreach (var patient in patients)
+        {
+            <div class="card mb-3" style="background-color: #f8f9fa;">
+                <div class="card-body">
+                    <h5 class="card-title">@patient.Name</h5>
+                    <p class="card-text">Age: @patient.Age years old</p>
+                    <p class="card-text">Gender: @patient.Gender</p>
+                    <p class="card-text">Contact: @patient.Contact</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<Patient> patients = new();
+    private Patient newPatient = new Patient();
+
+    protected override async Task OnInitializedAsync()
+    {
+        patients = await Http.GetFromJsonAsync<List<Patient>>("api/patient");
+    }
+
+    private async Task AddPatient()
+    {
+        var response = await Http.PostAsJsonAsync("api/patient", newPatient);
+        if (response.IsSuccessStatusCode)
+        {
+            patients.Add(await response.Content.ReadFromJsonAsync<Patient>());
+            newPatient = new Patient();
+        }
+    }
+}
+
+<style>
+    .container-fluid {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .card {
+        margin-bottom: 1rem;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    
+
+    .card-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-text {
+        font-size: 1.25rem;
+        margin-bottom: 0.25rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+        font-size: 1.25rem;
+        padding: 0.75rem;
+    }
+
+    label {
+        font-size: 1.25rem;
+    }
+
+    button {
+        font-size: 1.25rem;
+        padding: 0.75rem;
+    }
+</style>

@@ -1,0 +1,129 @@
+﻿@page "/dashboard"
+
+<h3 class="text-center">Dashboard</h3>
+<div class="dashboard-container">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Patients</h4>
+        </div>
+        <div class="card-body">
+            <NavLink class="btn btn-primary" href="/patients">View Patients</NavLink>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Appointments</h4>
+        </div>
+        <div class="card-body">
+            <NavLink class="btn btn-primary" href="/appointments">View Appointments</NavLink>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Lab Tests</h4>
+        </div>
+        <div class="card-body">
+            <NavLink class="btn btn-primary" href="/labtests">
+                <span class="oi oi-clipboard" aria-hidden="true"></span> View Lab Tests(Soon Available in Version 1.0.2)
+            </NavLink>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Doctors</h4>
+        </div>
+        <div class="card-body">
+            <NavLink class="btn btn-primary" href="/doctors">View Doctors</NavLink>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Inventory Managment</h4>
+        </div>
+        <div class="card-body">
+            <NavLink class="btn btn-primary" href="/inventory">Manage Inventory</NavLink>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Notifications</h4>
+        </div>
+        <div class="card-body">
+            <NavLink class="btn btn-primary" href="/notifications">View Notifications</NavLink>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">medications</h4>
+        </div>
+        <div class="card-body">
+            <NavLink class="btn btn-primary" href="/medications">View medications</NavLink>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Reviews</h4>
+        </div>
+        <div class="card-body">
+            <NavLink class="btn btn-primary" href="/review">Patients Reviews But Dont Click</NavLink>
+        </div>
+    </div>
+    
+</div>
+
+<style>
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+        padding: 2rem;
+    }
+
+    .card {
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .card:hover {
+            transform: translateY(-0.5rem);
+            box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.2);
+        }
+
+    .card-header {
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .card-title {
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .btn {
+        background-color: #007bff;
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1rem;
+        margin: 0.5rem 0;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+</style>

@@ -1,0 +1,153 @@
+﻿@page "/appointments"
+@inject HttpClient Http
+@using JWT.Auth.BlazorUI.Shared.Models
+
+<h3 class="text-center my-4">Appointment Management</h3>
+
+<div class="container-fluid">
+    <div class="card shadow mb-4" style="background-color: #f8f9fa;">
+        <div class="card-body">
+            <h5 class="card-title">Add New Appointment</h5>
+            <form @onsubmit="AddAppointment">
+                <div class="form-group">
+                    <label for="patientId">Patient ID:</label>
+                    <input @bind="newAppointment.PatientId" class="form-control form-control-lg" id="patientId" placeholder="Patient ID" type="number" required />
+                </div>
+                <div class="form-group">
+                    <label for="doctor">Doctor:</label>
+                    <input @bind="newAppointment.Doctor" class="form-control form-control-lg" id="doctor" placeholder="Doctor" required />
+                </div>
+                <div class="form-group">
+                    <label for="date">Date:</label>
+                    <input @bind="newAppointment.Date" class="form-control form-control-lg" id="date" placeholder="Date" type="date" required />
+                </div>
+                <div class="form-group">
+                    <label for="time">Time:</label>
+                    <input @bind="newAppointment.Time" class="form-control form-control-lg" id="time" placeholder="Time" type="time" required />
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100">Add Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="list-group">
+        @if (loading)
+        {
+            <p>Loading...</p>
+        }
+        else if (appointments == null || !appointments.Any())
+        {
+            <p>No appointments available.</p>
+        }
+        else
+        {
+            @foreach (var appointment in appointments)
+            {
+                <div class="card mb-3" style="background-color: #f8f9fa;">
+                    <div class="card-body">
+                        <h5 class="card-title">Date: @appointment.Date.ToShortDateString()</h5>
+                        <p class="card-text">Time: @appointment.Time</p>
+                        <p class="card-text">Doctor: Dr. @appointment.Doctor</p>
+                        <p class="card-text">Patient ID: @appointment.PatientId</p>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private List<Appointment> appointments;
+    private Appointment newAppointment = new Appointment();
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAppointments();
+    }
+
+    private async Task LoadAppointments()
+    {
+        try
+        {
+            appointments = await Http.GetFromJsonAsync<List<Appointment>>("api/appointment");
+            loading = false;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading appointments: {ex.Message}");
+            loading = false;
+        }
+    }
+
+    private async Task AddAppointment()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/appointment", newAppointment);
+            response.EnsureSuccessStatusCode();
+            var addedAppointment = await response.Content.ReadFromJsonAsync<Appointment>();
+
+            if (addedAppointment != null)
+            {
+                if (appointments == null)
+                {
+                    appointments = new List<Appointment>();
+                }
+
+                appointments.Add(addedAppointment);
+                newAppointment = new Appointment();
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding appointment: {ex.Message}");
+        }
+    }
+}
+
+<style>
+    .container-fluid {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .card {
+        margin-bottom: 1rem;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-text {
+        font-size: 1.25rem;
+        margin-bottom: 0.25rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+        font-size: 1.25rem;
+        padding: 0.75rem;
+    }
+
+    label {
+        font-size: 1.25rem;
+    }
+
+    button {
+        font-size: 1.25rem;
+        padding: 0.75rem;
+    }
+</style>

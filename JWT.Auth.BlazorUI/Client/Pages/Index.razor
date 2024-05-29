@@ -1,0 +1,187 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@using System.Text.Json;
+@using System.Text;
+@using JWT.Auth.BlazorUI.Shared.Models;
+@using JWT.Auth.BlazorUI.Client.Pages;
+@inject HttpClient _http
+@inject NavigationManager Navigation
+
+<PageTitle>Hospital Management System</PageTitle>
+
+<div class="container position-relative">
+    <img src="images/hs3.jpg" alt="Hospital Building" class="img-fluid w-100">
+    <div class="card shadow-lg rounded-lg border-0 position-absolute" style="max-width: 700px; transform: translate(-50%, -50%); z-index: 1; background-color: #001f3f;">
+        <div class="card-body text-center text-white">
+            <h1 class="card-title mb-4 ">LOGIN</h1>
+            <p class="card-text mb-4 EXP">Experience a streamlined approach to managing appointments, medical records, and patient interactions. Our team is dedicated to providing exceptional care and service to every patient who walks through our doors.</p>
+            <p class="card-text mb-4 contact-info"><strong>Contact Information:</strong><br>Dr. Danial<br>Phone: +92 341 8706012<br>Email: 221407@students.au.edu.pk</p>
+
+            <div class="mb-3">
+                <input @bind="loginModel.Email" type="email" class="form-control form-control-lg" placeholder="Email" />
+            </div>
+            <div class="mb-3">
+                <input @bind="loginModel.Password" type="password" class="form-control form-control-lg" placeholder="Password" />
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary btn-lg" @onclick="LoginAsync">Login</button>
+                <a href="/registration" class="btn btn-success btn-lg">Sign Up</a>
+                <a href="/book-appointment" class="btn btn-warning btn-lg">Book Appointment</a>
+            </div>
+
+            @if (!string.IsNullOrEmpty(APIErrorMessage))
+            {
+                <div class="alert alert-danger mt-3" role="alert">
+                    @APIErrorMessage
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<SurveyPrompt Title="How is the Hospital Management System working for you?" />
+
+@code {
+    LoginVm loginModel = new LoginVm();
+
+    string APIErrorMessage = string.Empty;
+
+    private async Task LoginAsync()
+    {
+        var jsonPayload = JsonSerializer.Serialize(loginModel);
+        var requestContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+        var response = await _http.PostAsync("/api/User/login", requestContent);
+
+        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            var errors = await response.Content.ReadFromJsonAsync<Dictionary<string, List<string>>>();
+            if (errors != null && errors.Count > 0)
+            {
+                APIErrorMessage = string.Join(" | ", errors.SelectMany(e => e.Value));
+            }
+            else
+            {
+                APIErrorMessage = "Invalid login attempt.";
+            }
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            // On successful user authentication.
+            Navigation.NavigateTo("/dashboard"); // Assuming "/dashboard" is your home page after login
+        }
+        else
+        {
+            APIErrorMessage = "Unable to log in, please try later";
+        }
+    }
+}
+
+<style>
+    .container {
+        position: relative;
+        overflow: hidden;
+        min-height: 100vh;
+    }
+
+    .card {
+        border-radius: 15px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 700px;
+        z-index: 1;
+        overflow: hidden;
+        background-color: #001f3f; /* Navy blue background */
+    }
+
+    .card-body {
+        padding: 20px;
+        color: #fff; /* White text for better readability */
+    }
+
+    .card-title {
+        font-size: 2.5rem;
+        color: #007bff; /* Blue color for the title */
+        margin-bottom: 20px;
+    }
+
+    .card-text {
+        font-size: 1.2rem;
+        color: #fff; /* White color for the text */
+        margin-bottom: 20px;
+    }
+
+    .form-control-lg {
+        font-size: 1.2rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ced4da;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+    }
+
+        .form-control-lg:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+    .btn-primary,
+    .btn-success,
+    .btn-warning {
+        border-radius: 25px;
+        padding: 12px 24px;
+        font-size: 1.1rem;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        text-decoration: none;
+        margin-right: 10px;
+        color: #fff; /* Ensure text inside buttons is white for better contrast */
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+    .btn-success {
+        background-color: #6f42c1; /* Purple color */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .btn-success:hover {
+            background-color: #5a379a;
+            transform: translateY(-2px);
+        }
+
+    .btn-warning {
+        background-color: #fd7e14; /* Orange color */
+        border-color: #fd7e14;
+    }
+
+        .btn-warning:hover {
+            background-color: #e36d0a;
+            border-color: #e36d0a;
+        }
+
+    .img-fluid {
+        height: auto;
+        position: relative;
+        z-index: 0;
+    }
+
+    .text-white {
+        color: #fff !important; /* Ensure text is white */
+    }
+
+    .contact-info {
+        color: #fd7e14; /* Orange color for contact information */
+    }
+
+</style>

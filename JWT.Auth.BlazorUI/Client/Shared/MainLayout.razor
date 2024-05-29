@@ -1,0 +1,29 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Color="Color.Primary" Fixed="false">
+        <MudLink Underline="Underline.None" Color="Color.Inherit" Href="/">Welcome to Our Hospital</MudLink>
+        <MudSpacer />
+
+        <MudToolbar>
+            <div class="login-signup-links">
+                <MudLink Underline="Underline.None" Color="Color.Inherit" Href="/login" Class="mr-2">Login</MudLink>
+                <MudLink Underline="Underline.None" Color="Color.Inherit" Href="/registration">Sign Up</MudLink>
+            </div>
+        </MudToolbar>
+    </MudAppBar>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+<style>
+    .login-signup-links {
+        display: flex;
+        align-items: center;
+    }
+</style>

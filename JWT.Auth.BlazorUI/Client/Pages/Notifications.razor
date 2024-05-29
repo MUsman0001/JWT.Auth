@@ -1,0 +1,52 @@
+﻿@page "/notifications"
+
+<h3 class="text-center">Notifications</h3>
+<div class="notifications-container">
+    @if (notifications.Any())
+    {
+        @foreach (var notification in notifications)
+        {
+            <div class="notification">
+                <h4>@notification.Title</h4>
+                <p>@notification.Message</p>
+                <p><em>@notification.Timestamp.ToString("MMMM dd, yyyy - HH:mm")</em></p>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No notifications</p>
+    }
+</div>
+
+@code {
+    private List<Notification> notifications = new List<Notification>
+    {
+        new Notification { Title = "New Appointment Scheduled", Message = "You have a new appointment scheduled with Dr. Smith on June 10, 2024.", Timestamp = DateTime.Now.AddDays(-1) },
+        new Notification { Title = "Medication Reminder", Message = "Don't forget to take your medication at 9:00 PM.", Timestamp = DateTime.Now.AddDays(-3) }
+    };
+
+    public class Notification
+    {
+        public string Title { get; set; }
+        public string Message { get; set; }
+        public DateTime Timestamp { get; set; }
+    }
+}
+<style>
+    .notifications-container {
+        padding: 2rem;
+    }
+
+    .notification {
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+        .notification h4 {
+            margin-top: 0;
+        }
+</style>

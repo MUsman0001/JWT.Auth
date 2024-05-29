@@ -1,0 +1,200 @@
+﻿@page "/medications"
+
+<h3 class="text-center">Medication Management</h3>
+<div class="medication-container">
+    <button class="btn btn-primary" @onclick="ShowAddNewMedicationForm">Add New Medication</button>
+
+    @if (showAddNewMedicationForm)
+    {
+        <div class="form-container">
+            <h4>Add New Medication</h4>
+            <input placeholder="Name" @bind="newMedication.Name" />
+            <input placeholder="Type" @bind="newMedication.Type" />
+            <input placeholder="Dosage" @bind="newMedication.Dosage" />
+            <button class="btn btn-success" @onclick="AddNewMedication">Save</button>
+            <button class="btn btn-secondary" @onclick="CancelAddNewMedicationForm">Cancel</button>
+        </div>
+    }
+
+    <div class="medication-list">
+        @foreach (var medication in medications)
+        {
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">@medication.Name</h4>
+                    <span>Type: @medication.Type</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Dosage:</strong> @medication.Dosage</p>
+                    <button class="btn btn-warning" @onclick="() => ShowEditMedicationForm(medication.Id)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => RemoveMedication(medication.Id)">Remove</button>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (showEditMedicationForm)
+    {
+        <div class="form-container">
+            <h4>Edit Medication</h4>
+            <input placeholder="Name" @bind="editMedication.Name" />
+            <input placeholder="Type" @bind="editMedication.Type" />
+            <input placeholder="Dosage" @bind="editMedication.Dosage" />
+            <button class="btn btn-success" @onclick="UpdateMedication">Save</button>
+            <button class="btn btn-secondary" @onclick="CancelEditMedicationForm">Cancel</button>
+        </div>
+    }
+</div>
+
+@code {
+    private List<Medication> medications = new List<Medication>
+    {
+        new Medication { Id = 1, Name = "Aspirin", Type = "Pain Relief", Dosage = "500mg" },
+        new Medication { Id = 2, Name = "Paracetamol", Type = "Fever Reducer", Dosage = "250mg" }
+    };
+
+    private Medication newMedication = new Medication();
+    private Medication editMedication = new Medication();
+    private bool showAddNewMedicationForm = false;
+    private bool showEditMedicationForm = false;
+
+    private void ShowAddNewMedicationForm()
+    {
+        showAddNewMedicationForm = true;
+        showEditMedicationForm = false;
+    }
+
+    private void CancelAddNewMedicationForm()
+    {
+        showAddNewMedicationForm = false;
+        newMedication = new Medication();
+    }
+
+    private void AddNewMedication()
+    {
+        newMedication.Id = medications.Max(m => m.Id) + 1;
+        medications.Add(newMedication);
+        newMedication = new Medication();
+        showAddNewMedicationForm = false;
+    }
+
+    private void ShowEditMedicationForm(int id)
+    {
+        editMedication = medications.FirstOrDefault(m => m.Id == id);
+        showEditMedicationForm = true;
+        showAddNewMedicationForm = false;
+    }
+
+    private void CancelEditMedicationForm()
+    {
+        showEditMedicationForm = false;
+        editMedication = new Medication();
+    }
+
+    private void UpdateMedication()
+    {
+        var index = medications.FindIndex(m => m.Id == editMedication.Id);
+        if (index != -1)
+        {
+            medications[index] = editMedication;
+        }
+        editMedication = new Medication();
+        showEditMedicationForm = false;
+    }
+
+    private void RemoveMedication(int id)
+    {
+        var medication = medications.FirstOrDefault(m => m.Id == id);
+        if (medication != null)
+        {
+            medications.Remove(medication);
+        }
+    }
+
+    public class Medication
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public string Dosage { get; set; }
+    }
+}
+<style>
+    .medication-container {
+        padding: 2rem;
+    }
+
+    .form-container {
+        margin: 1rem 0;
+        padding: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 0.5rem;
+    }
+
+    .medication-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .card {
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+        padding: 1rem;
+    }
+
+    .card-header {
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 0.5rem;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .card-title {
+        margin: 0;
+        font-size: 1.25rem;
+    }
+
+    .card-body {
+        padding: 0.5rem;
+        text-align: center;
+    }
+
+    .btn {
+        background-color: #007bff;
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1rem;
+        margin: 0.5rem 0;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+    .btn-warning {
+        background-color: #ffc107;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+</style>
